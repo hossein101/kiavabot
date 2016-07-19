@@ -1,22 +1,24 @@
-local function run(msg)
-    
+local function run(msg, matches)
+    if is_owner(msg) then
+        return
+    end
     local data = load_data(_config.moderation.data)
-    
-     if data[tostring(msg.to.id)]['settings']['operator'] == '✅' then
-      
+    if data[tostring(msg.to.id)] then
+        if data[tostring(msg.to.id)]['settings'] then
+            if data[tostring(msg.to.id)]['settings']['operator'] then
+                operator = data[tostring(msg.to.id)]['settings']['operator']
+            end
+        end
+    end
     local chat = get_receiver(msg)
-local name = user_print_name(msg.from)
     local user = "user#id"..msg.from.id
-if msg.to.type == 'channel' and not is_momod(msg) then
-
- delete_msg(msg.id, ok_cb, true)
-send_large_msg(chat, "👤کاربر : [ @" .. msg.from.username .. "] \n💠شناسه کاربر : [" .. msg.from.id .."] \n ❌در حال فرستادن اوپراتور است\n 🚷پیام پاک شد" )  
-      end
-   end
+    if operator == "yes" then
+        delete_msg(msg.id, ok_cb, true)
+    end
 end
-    
+ 
 return {
-patterns = {
+  patterns = {
     "ایرانسل(.*)",
     "همراه اول(.*)",
     "تالیا(.*)",

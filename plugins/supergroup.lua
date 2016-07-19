@@ -1,4 +1,4 @@
-﻿--Begin supergrpup.lua
+--Begin supergrpup.lua
 --Check members #Add supergroup
 local function check_member_super(cb_extra, success, result)
   local receiver = cb_extra.receiver
@@ -25,7 +25,6 @@ local function check_member_super(cb_extra, success, result)
 		  lock_sticker = 'yes',
 		  member = 'no',
 		  public = 'no',
-          expiretime = 'null',
 		  lock_rtl = 'no',
 		  lock_tgservice = 'yes',
 		  lock_contacts = 'no',
@@ -179,10 +178,10 @@ local function lock_group_links(msg, data, target)
     return
   end
   local group_link_lock = data[tostring(target)]['settings']['lock_link']
-  if group_link_lock == 'yes' then
+  if group_link_lock == '✅' then
     return 'Link posting is already locked'
   else
-    data[tostring(target)]['settings']['lock_link'] = 'yes'
+    data[tostring(target)]['settings']['lock_link'] = '✅'
     save_data(_config.moderation.data, data)
     return 'Link posting has been locked'
   end
@@ -339,34 +338,6 @@ local function unlock_group_reply(msg, data, target)
     data[tostring(target)]['settings']['reply'] = 'no'
     save_data(_config.moderation.data, data)
     return 'reply has been unlocked'
-  end
-end
-
-local function lock_group_welcome(msg, data, target)
-      if not is_momod(msg) then
-        return "شما مدیر گروه نیستید"
-      end
-  local welcoms = data[tostring(target)]['welcome']
-  if welcoms == 'yes' then
-    return 'پیام خوش امد گویی فعال است'
-  else
-    data[tostring(target)]['welcome'] = 'yes'
-    save_data(_config.moderation.data, data)
-    return 'پیام خوش امد گویی فعال شد\nبرای تغییر این پیام از دستور زیر استفاده کنید\n/set welcome <welcomemsg>'
-  end
-end
-
-local function unlock_group_welcome(msg, data, target)
-      if not is_momod(msg) then
-        return "شما مدیر گروه نیستید"
-      end
-  local welcoms = data[tostring(target)]['welcome']
-  if welcoms == 'no' then
-    return 'پیام خوش امد گویی غیر فعال است'
-  else
-    data[tostring(target)]['welcome'] = 'no'
-    save_data(_config.moderation.data, data)
-    return 'پیام خوش امد گویی غیر فعال شد'
   end
 end
 
@@ -886,7 +857,7 @@ local function unlock_group_sticker(msg, data, target)
   if group_sticker_lock == 'no' then
     return 'Sticker posting is already unlocked'
   else
-    data[tostring(target)]['settings']['lock_sticker'] = 'no'
+    data[tostring(target)]['settings']['lock_sticker'] = 'yes'
     save_data(_config.moderation.data, data)
     return 'Sticker posting has been unlocked'
   end
@@ -985,18 +956,18 @@ local function set_rulesmod(msg, data, target)
   local data_cat = 'rules'
   data[tostring(target)][data_cat] = rules
   save_data(_config.moderation.data, data)
-  return 'قوانین برای گروه ست شد'
+  return 'SuperGroup rules set'
 end
 
 --'Get supergroup rules' function
 local function get_rules(msg, data)
   local data_cat = 'rules'
   if not data[tostring(msg.to.id)][data_cat] then
-    return 'درحال حاظر برای گروه قوانین ثبت نشده'
+    return 'No rules available.'
   end
   local rules = data[tostring(msg.to.id)][data_cat]
   local group_name = data[tostring(msg.to.id)]['settings']['set_name']
-  local rules = group_name..' قوانین :\n\n'..rules:gsub("/n", " ")
+  local rules = group_name..' rules:\n\n'..rules:gsub("/n", " ")
   return rules
 end
 
@@ -1158,33 +1129,11 @@ function show_supergroup_settingsmod(msg, target)
 			data[tostring(target)]['settings']['normal'] = 'no'
 		end
 	end
-
-local Welcome = "yes"
-    if  data[tostring(msg.to.id)]['welcome'] then
-    Welcome = data[tostring(msg.to.id)]['welcome']
-    end
-
-local Expiretime = "Unknown"
-    local now = tonumber(os.time())
-    local rrredis = redis:hget ('expiretime', get_receiver(msg))
-    if redis:hget ('expiretime', get_receiver(msg)) then
-    
-    Expiretime = math.floor((tonumber(rrredis) - tonumber(now)) / 86400) + 1
-    end
   local gp_type = data[tostring(msg.to.id)]['group_type']
   
   local settings = data[tostring(target)]['settings']
-  local text = "------------------------------\nSuperGroup Settings⚙:⏬\n-----------------------------️\n>Lock links: "..settings.lock_link.."\n>️Lock ads: "..settings.ads.."\n>️Lock contacts: "..settings.lock_contacts.."\n>️Lock arabic: "..settings.lock_arabic.."\n>️Lock member: "..settings.lock_member.."\n>️Lock Rtl: "..settings.lock_rtl.."\n>️Lock Tgservice: "..settings.lock_tgservice.."\n>️Lock Sticker: "..settings.lock_sticker.."\n>️Lock Tag: "..settings.tag.."\n>️Lock Number: "..settings.number.."\n>️Lock Emoji: "..settings.emoji.."\n>️Lock English: "..settings.english.."\n>️Lock fwd(Forward): "..settings.fwd.."\n>️Lock Reply: "..settings.reply.."\n>Lock join: "..settings.join.."\n>️Lock username: "..settings.username.."\n>️Lock Media: "..settings.media.."\n>️Lock fosh: "..settings.fosh.."\n>️Lock leave: "..settings.leave.."\n>️Lock Bots: "..bots_protection.."\n>️Lock operator: "..settings.operator.."\n>Lock flood: ".. settings.flood.."\n>Lock Spam: "..settings.lock_spam.."\n>Lock Strict: "..settings.strict.."\n-------------------------\nSwitch Settings⚙:⏬\n-------------------------\n|>Switch Model Etehad: "..settings.etehad.."\n|>Switch Model Normal: "..settings.normal.."\n------------------------------\nAbout SuperGroup⚙:⏬\n-----------------------------\n|>Public SuperGroup: "..settings.public.."\n|>Group Model: "..gp_type.."\n|>Flood Sensitivity: "..NUM_MSG_MAX.."\n|>ExpireTime Group : "..Expiretime.."\n|>Welcome Group : "..Welcome.."\n|>Lock all : "..settings.all
+  local text = "------------------------------\nSuperGroup Settings⚙:⏬\n-----------------------------️\n>Lock links: "..settings.lock_link.."\n>️Lock ads: "..settings.ads.."\n>️Lock contacts: "..settings.lock_contacts.."\n>️Lock arabic: "..settings.lock_arabic.."\n>️Lock member: "..settings.lock_member.."\n>️Lock Rtl: "..settings.lock_rtl.."\n>️Lock Tgservice: "..settings.lock_tgservice.."\n>️Lock Sticker: "..settings.lock_sticker.."\n>️Lock Tag: "..settings.tag.."\n>️Lock Number: "..settings.number.."\n>️Lock Emoji: "..settings.emoji.."\n>️Lock English: "..settings.english.."\n>️Lock fwd(Forward): "..settings.fwd.."\n>️Lock Reply: "..settings.reply.."\n>Lock join: "..settings.join.."\n>️Lock username: "..settings.username.."\n>️Lock Media: "..settings.media.."\n>️Lock fosh: "..settings.fosh.."\n>️Lock leave: "..settings.leave.."\n>️Lock Bots: "..bots_protection.."\n>️Lock operator: "..settings.operator.."\n---------------------------\nSettings  Security⚙:⏬\n------------------------\n|>Lock flood: ".. settings.flood.."\n|>Lock Spam: "..settings.lock_spam.."\n|>Lock Strict: "..settings.strict.."\n|>Flood Sensitivity: "..NUM_MSG_MAX.."\n------------------------------\nSwitch Settings⚙:⏬\n------------------------------\n|>Switch Model Etehad: "..settings.etehad.."\n|>Switch Model Normal: "..settings.normal.."\n------------------------------\nAbout SuperGroup⚙:⏬\n-----------------------------\n|>Public SuperGroup: "..settings.public.."\n|>Group Model: "..gp_type.."\n|>Lock all: "..settings.all
   return text
-end
-local function set_welcomemod(msg, data, target)
-      if not is_momod(msg) then
-        return "شما مدیر گروه نیستید"
-      end
-  local data_cat = 'welcome_msg'
-  data[tostring(target)][data_cat] = rules
-  save_data(_config.moderation.data, data)
-  return 'پیام خوش امد گویی :\n'..rules..'\n---------------\nبرای نمایش نام کاربر و نام گروه یا قوانین  میتوانید به صورت زیر عمل کنید\n\n /set welcome salam {name} be goroohe {group} khosh amadid \n ghavanine gorooh: {rules} \n\nربات به صورت هوشمند نام گروه , نام کاربر و قوانین را به جای {name}و{group} و {rules} اضافه میکند.'
 end
 
 local function promote_admin(receiver, member_username, user_id)
@@ -1199,16 +1148,6 @@ local function promote_admin(receiver, member_username, user_id)
   end
   data[group]['moderators'][tostring(user_id)] = member_tag_username
   save_data(_config.moderation.data, data)
-end
-
-local function set_expiretime(msg, data, target)
-      if not is_sudo(msg) then
-        return "شما ادمین ربات نیستید!"
-      end
-  local data_cat = 'expire'
-  data[tostring(target)][data_cat] = expired
-  save_data(_config.moderation.data, data)
-  return 'تاریخ انقضای گروه به '..expired..' ست شد'
 end
 
 local function demote_admin(receiver, member_username, user_id)
@@ -2197,33 +2136,6 @@ local function run(msg, matches)
 			return set_rulesmod(msg, data, target)
 		end
 
- if matches[1]:lower() == 'uexpiretime' and not matches[3] then
-	local hash = 'usecommands:'..msg.from.id..':'..msg.to.id
-    redis:incr(hash)
-        expired = 'Unlimited'
-        local target = msg.to.id
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] has changed group expire time to [unlimited]")
-        return set_expiretime(msg, data, target)
-    end
-	if matches[1]:lower() == 'expiretime' then
-	local hash = 'usecommands:'..msg.from.id..':'..msg.to.id
-    redis:incr(hash)
-	  if tonumber(matches[2]) < 95 or tonumber(matches[2]) > 96 then
-        return "اولین match باید بین 95 تا 96 باشد"
-      end
-	  if tonumber(matches[3]) < 01 or tonumber(matches[3]) > 12 then
-        return "دومین match باید بین 01 تا 12 باشد"
-      end
-	  if tonumber(matches[4]) < 01 or tonumber(matches[4]) > 31 then
-        return "سومین match باید بین 01 تا 31 باشد"
-      end
-	  
-        expired = matches[2]..'.'..matches[3]..'.'..matches[4]
-        local target = msg.to.id
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] has changed group expire time to ["..matches[2]/matches[3]/matches[4].."]")
-        return set_expiretime(msg, data, target)
-    end
-
 		if msg.media then
 			if msg.media.type == 'photo' and data[tostring(msg.to.id)]['settings']['set_photo'] == 'waiting' and is_momod(msg) then
 				savelog(msg.to.id, name_log.." ["..msg.from.id.."] عکس جدید گروه تنظیم شد")
@@ -2279,14 +2191,6 @@ local function run(msg, matches)
 				channel_set_about(receiver, about_text, ok_cb, false)
 				return "موضوع گروه پاک شد"
 			end
-        if matches[2]:lower() == 'welcome' then
-	                        local hash = 'usecommands:'..msg.from.id..':'..msg.to.id
-                                redis:incr(hash)
-                                rules = matches[3]
-                                local target = msg.to.id
-                                savelog(msg.to.id, name_log.." ["..msg.from.id.."] has changed group welcome message to ["..matches[3].."]")
-                                return set_welcomemod(msg, data, target)
-                        end
 			if matches[2] == 'silentlist' then
 				chat_id = msg.to.id
 				local hash =  'mute_user:'..chat_id
@@ -2682,28 +2586,13 @@ local function run(msg, matches)
 				return unlock_group_operator(msg, data, target)
 			end
 		end
- if matches[1]:lower() == 'welcome' then
-      local target = msg.to.id
-      if matches[2]:lower() == 'enable' then
-	  local hash = 'usecommands:'..msg.from.id..':'..msg.to.id
-    redis:incr(hash)
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] locked welcome ")
-        return lock_group_welcome(msg, data, target)
-      end
-	if matches[2]:lower() == 'disable' then
-	  local hash = 'usecommands:'..msg.from.id..':'..msg.to.id
-    redis:incr(hash)
-        savelog(msg.to.id, name_log.." ["..msg.from.id.."] unlocked welcome ")
-        return unlock_group_welcome(msg, data, target)
-      end
-	end
 
 		if matches[1] == 'setflood' then
 			if not is_momod(msg) then
 				return
 			end
 			if tonumber(matches[2]) < 1 or tonumber(matches[2]) > 200 then
-				return "فقط از 1 تا 200 امکان پذیر"
+				return "Wrong number,range is [1-200]"
 			end
 			local flood_max = matches[2]
 			data[tostring(msg.to.id)]['settings']['flood_msg_max'] = flood_max
@@ -2728,11 +2617,11 @@ local function run(msg, matches)
 			if matches[2] == 'audio' then
 			local msg_type = 'Audio'
 				if not is_muted(chat_id, msg_type..': yes') then
-					savelog(msg.to.id, name_log.." ["..msg.from.id.."] لیست Mute شده ها: mute "..msg_type)
+					savelog(msg.to.id, name_log.." ["..msg.from.id.."] set SuperGroup to: mute "..msg_type)
 					mute(chat_id, msg_type)
-					return msg_type.." به لیست mute شدگان اضافه شد"
+					return msg_type.." has been muted"
 				else
-					return "سوپر گروه mute "..msg_type.." با موفقیت فعال شد"
+					return "SuperGroup mute "..msg_type.." is already on"
 				end
 			end
 			if matches[2] == 'photo' then
@@ -2740,7 +2629,7 @@ local function run(msg, matches)
 				if not is_muted(chat_id, msg_type..': yes') then
 					savelog(msg.to.id, name_log.." ["..msg.from.id.."] set SuperGroup to: mute "..msg_type)
 					mute(chat_id, msg_type)
-					return msg_type.." با موفقیت به لیست mute اضافه شد"
+					return msg_type.." has been muted"
 				else
 					return "SuperGroup mute "..msg_type.." is already on"
 				end
@@ -2750,7 +2639,7 @@ local function run(msg, matches)
 				if not is_muted(chat_id, msg_type..': yes') then
 					savelog(msg.to.id, name_log.." ["..msg.from.id.."] set SuperGroup to: mute "..msg_type)
 					mute(chat_id, msg_type)
-					return msg_type.." با موفقیت به لیست mute اضافه شد"
+					return msg_type.." has been muted"
 				else
 					return "SuperGroup mute "..msg_type.." is already on"
 				end
@@ -2760,7 +2649,7 @@ local function run(msg, matches)
 				if not is_muted(chat_id, msg_type..': yes') then
 					savelog(msg.to.id, name_log.." ["..msg.from.id.."] set SuperGroup to: mute "..msg_type)
 					mute(chat_id, msg_type)
-					return msg_type.." با موفقیت به لیست mute اضافه شد"
+					return msg_type.." have been muted"
 				else
 					return "SuperGroup mute "..msg_type.." is already on"
 				end
@@ -2770,7 +2659,7 @@ local function run(msg, matches)
 				if not is_muted(chat_id, msg_type..': yes') then
 					savelog(msg.to.id, name_log.." ["..msg.from.id.."] set SuperGroup to: mute "..msg_type)
 					mute(chat_id, msg_type)
-					return msg_type.." با موفقیت به لیست mute اضفه شد"
+					return msg_type.." have been muted"
 				else
 					return "SuperGroup mute "..msg_type.." is already on"
 				end
@@ -2780,7 +2669,7 @@ local function run(msg, matches)
 				if not is_muted(chat_id, msg_type..': yes') then
 					savelog(msg.to.id, name_log.." ["..msg.from.id.."] set SuperGroup to: mute "..msg_type)
 					mute(chat_id, msg_type)
-					return msg_type.." با موفقیت به لیست mute اضافه شد"
+					return msg_type.." has been muted"
 				else
 					return "Mute "..msg_type.." is already on"
 				end
@@ -2790,7 +2679,7 @@ local function run(msg, matches)
 				if not is_muted(chat_id, msg_type..': yes') then
 					savelog(msg.to.id, name_log.." ["..msg.from.id.."] set SuperGroup to: mute "..msg_type)
 					mute(chat_id, msg_type)
-					return "Mute "..msg_type.."  به صورت کامل mute شد"
+					return "Mute "..msg_type.."  has been enabled"
 				else
 					return "Mute "..msg_type.." is already on"
 				end
@@ -2803,9 +2692,9 @@ local function run(msg, matches)
 				if is_muted(chat_id, msg_type..': yes') then
 					savelog(msg.to.id, name_log.." ["..msg.from.id.."] set SuperGroup to: unmute "..msg_type)
 					unmute(chat_id, msg_type)
-					return msg_type.." از لیست mute حذف شد"
+					return msg_type.." has been unmuted"
 				else
-					return "Mute "..msg_type.." با موفقیت غیرفعال شد"
+					return "Mute "..msg_type.." is already off"
 				end
 			end
 			if matches[2] == 'photo' then
@@ -2813,7 +2702,7 @@ local function run(msg, matches)
 				if is_muted(chat_id, msg_type..': yes') then
 					savelog(msg.to.id, name_log.." ["..msg.from.id.."] set SuperGroup to: unmute "..msg_type)
 					unmute(chat_id, msg_type)
-					return msg_type.." از لیست Mute حذف شد"
+					return msg_type.." has been unmuted"
 				else
 					return "Mute "..msg_type.." is already off"
 				end
@@ -2823,7 +2712,7 @@ local function run(msg, matches)
 				if is_muted(chat_id, msg_type..': yes') then
 					savelog(msg.to.id, name_log.." ["..msg.from.id.."] set SuperGroup to: unmute "..msg_type)
 					unmute(chat_id, msg_type)
-					return msg_type.." از لیست mute حذف شد"
+					return msg_type.." has been unmuted"
 				else
 					return "Mute "..msg_type.." is already off"
 				end
@@ -2833,7 +2722,7 @@ local function run(msg, matches)
 				if is_muted(chat_id, msg_type..': yes') then
 					savelog(msg.to.id, name_log.." ["..msg.from.id.."] set SuperGroup to: unmute "..msg_type)
 					unmute(chat_id, msg_type)
-					return msg_type.." از لیست mute حذف شد"
+					return msg_type.." have been unmuted"
 				else
 					return "Mute "..msg_type.." is already off"
 				end
@@ -2843,7 +2732,7 @@ local function run(msg, matches)
 				if is_muted(chat_id, msg_type..': yes') then
 					savelog(msg.to.id, name_log.." ["..msg.from.id.."] set SuperGroup to: unmute "..msg_type)
 					unmute(chat_id, msg_type)
-					return msg_type.." از لیست mute حذف شد"
+					return msg_type.." have been unmuted"
 				else
 					return "Mute "..msg_type.." is already off"
 				end
@@ -2853,7 +2742,7 @@ local function run(msg, matches)
 				if is_muted(chat_id, msg_type..': yes') then
 					savelog(msg.to.id, name_log.." ["..msg.from.id.."] set SuperGroup to: unmute message")
 					unmute(chat_id, msg_type)
-					return msg_type.." از لیست mute حذف شد"
+					return msg_type.." has been unmuted"
 				else
 					return "Mute text is already off"
 				end
@@ -2863,9 +2752,9 @@ local function run(msg, matches)
 				if is_muted(chat_id, msg_type..': yes') then
 					savelog(msg.to.id, name_log.." ["..msg.from.id.."] set SuperGroup to: unmute "..msg_type)
 					unmute(chat_id, msg_type)
-					return "Mute "..msg_type.." با موفقیت تمام mute غیرفعال شد"
+					return "Mute "..msg_type.." has been disabled"
 				else
-					return "Mute "..msg_type.." قبلا غیرفعال بوده است"
+					return "Mute "..msg_type.." is already disabled"
 				end
 			end
 		end
@@ -2926,7 +2815,7 @@ local function run(msg, matches)
 		end
 
 		if matches[1] == 'help' and not is_owner(msg) then
-			text = "برای دریافت راهنمایی ممبر ها کافیست !help member را بفرستید"
+			text = "برای دریافت راهنمایی ممبر ها کافیست /help_fun را بفرستید"
 			reply_msg(msg.id, text, ok_cb, false)
 		elseif matches[1] == 'help' and is_owner(msg) then
 			local name_log = user_print_name(msg.from)
@@ -3014,8 +2903,6 @@ return {
 	"^[#!/]([Nn]ewlink)$",
 	"^[#!/]([Ss]etlink)$",
 	"^[#!/]([Ll]ink)$",
-    "^[#!/]([Uu]expiretime)$",
-    "^[#!/]([Ee]xpiretime) (.*) (.*) (.*)$",
 	"^[#!/]([Rr]es) (.*)$",
 	"^[#!/]([Ss]etadmin) (.*)$",
 	"^[#!/]([Ss]etadmin)",
@@ -3042,7 +2929,6 @@ return {
 	"^[#!/]([Uu]nsilent)$",
 	"^[#!/]([Uu]nsilent) (.*)$",
 	"^[#!/]([Pp]ublic) (.*)$",
-    "^[#!/]([Ww]elcome) (.*)$",
 	"^[#!/]([Ss]ettings)$",
 	"^[#!/]([Rr]ules)$",
 	"^[#!/]([Ss]etflood) (%d+)$",
@@ -3065,4 +2951,3 @@ return {
   pre_process = pre_process
 }
 
---@kiava

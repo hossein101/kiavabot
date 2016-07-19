@@ -2,15 +2,17 @@ local function run(msg)
     
     local data = load_data(_config.moderation.data)
     
-     if data[tostring(msg.to.id)]['settings']['media'] == '✅' then
+     if data[tostring(msg.to.id)]['settings']['media'] == 'yes' then
       
-    local chat = get_receiver(msg)
-local name = user_print_name(msg.from)
-    local user = "user#id"..msg.from.id
-if msg.to.type == 'channel' and not is_momod(msg) then
-
- delete_msg(msg.id, ok_cb, true)
-send_large_msg(chat, "👤کاربر : [ @" .. msg.from.username .. "] \n💠شناسه کاربر : [" .. msg.from.id .."] \n ❌در حال فرستادن فایل است\n 🚷پیام پاک شد" )      end
+    
+if not is_momod(msg) then
+    
+    
+delete_msg(msg.id, ok_cb, true)
+    local msgads = 'ForbiddenAdText'
+   local receiver = msg.to.id
+	
+      end
    end
 end
     
