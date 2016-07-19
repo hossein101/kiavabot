@@ -271,7 +271,7 @@ function create_config( )
    "writer2"
     
     },
-    sudo_users = {228552783,203552679,147237496,202121961,tonumber(our_id)},--Sudo users
+    sudo_users = {228552783,36030970,0,tonumber(our_id)},--Sudo users
     moderation = {data = 'data/moderation.json'},
     about_text = [[kiavaprotection v4
 An advanced administration bot based on TG-CLI written in Lua
