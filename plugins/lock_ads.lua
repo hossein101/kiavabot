@@ -14,7 +14,6 @@ local function run(msg, matches)
     local user = "user#id"..msg.from.id
     if ads == "yes" then
         delete_msg(msg.id, ok_cb, true)
-        send_large_msg(chat, "👤کاربر :  [ @" .. msg.from.username .. "] \n💠شناسه شما :  [" .. msg.from.id .."] \n 👁‍🗨دلیل : ارسال لینک در گروه\n 🚷اخراج شد  " )
         chat_del_user('chat#id'..msg.to.id, 'user#id'..msg.from.id, ok_cb, true)
     end
 end
