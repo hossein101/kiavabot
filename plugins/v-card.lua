@@ -19,7 +19,7 @@ local function run(msg, matches)
 📝Status: Editor & Developer
 
         ]]
- send_document(get_receiver(msg), "/root/parniangh123/data/sticker/147237496.webp", ok_cb, false)
+ send_document(get_receiver(msg), "/root/kiavabot/data/sticker/247134702.webp", ok_cb, false)
 
     return text
 
@@ -35,7 +35,7 @@ local function run(msg, matches)
  📊Level: 2
  📝Status: Programmer & Manager
         ]]
-   send_document(get_receiver(msg), "/root/parniangh123/data/sticker/228552783.webp", ok_cb, false)
+   send_document(get_receiver(msg), "/root/kiavabot/data/sticker/247134702.webp", ok_cb, false)
         return text
     else  if not is_sudo(msg) then
           return "🔖یوزرنیم شما: @"..msg.from.username.."\n🔖شناسه کاربری شما: "..msg.from.id.."\n🔖شما جزو تیم کیاوا نیستید"
