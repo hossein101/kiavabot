@@ -22,7 +22,7 @@ local function check_member_super(cb_extra, success, result)
 		  lock_link = "yes",
           flood = 'yes',
 		  lock_spam = 'yes',
-		  lock_sticker = 'yes',
+		  lock_sticker = 'no',
 		  member = 'no',
 		  public = 'no',
 		  lock_rtl = 'no',
@@ -178,10 +178,10 @@ local function lock_group_links(msg, data, target)
     return
   end
   local group_link_lock = data[tostring(target)]['settings']['lock_link']
-  if group_link_lock == '✅' then
+  if group_link_lock == 'yes' then
     return 'Link posting is already locked'
   else
-    data[tostring(target)]['settings']['lock_link'] = '✅'
+    data[tostring(target)]['settings']['lock_link'] = 'yes'
     save_data(_config.moderation.data, data)
     return 'Link posting has been locked'
   end
